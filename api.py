@@ -1,23 +1,12 @@
-from fastapi import FastAPI, UploadFile, File
-import tempfile
-import os
-
-from btcas_pipeline import process_video
-
-app = FastAPI()
-
-@app.get("/")
-def home():
-    return {"status": "running"}
+import traceback
 
 @app.post("/inspect")
 async def inspect_video(file: UploadFile = File(...)):
-    
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
-        tmp.write(await file.read())
-        video_path = tmp.name
-
     try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
+            tmp.write(await file.read())
+            video_path = tmp.name
+
         result = process_video(video_path, camera_side="LEFT")
 
         return {
@@ -25,15 +14,13 @@ async def inspect_video(file: UploadFile = File(...)):
             "inspection": result
         }
 
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
+
     finally:
-        os.remove(video_path)
-
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+        if 'video_path' in locals() and os.path.exists(video_path):
+            os.remove(video_path)
