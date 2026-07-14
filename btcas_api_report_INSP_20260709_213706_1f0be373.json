@@ -1,0 +1,103 @@
+{
+  "inspection_run_id": "INSP_20260709_213706_1f0be373",
+  "processing_timestamp": "2026-07-09T21:37:06.061450",
+  "status": "COMPLETE",
+  "tanks": [
+    {
+      "coach_number": 1,
+      "tank_id": "L1",
+      "camera_side": "LEFT",
+      "timestamp_sec": 13.3,
+      "maintenance_status": "Maintenance Required",
+      "tank_image_path": "cropped_tanks\\l\\L1.jpg",
+      "surface_status": "Clean",
+      "pipe_support_status": "Present",
+      "pipe_status": "Not Connected",
+      "detection_confidence": 0.781
+    },
+    {
+      "coach_number": 1,
+      "tank_id": "L2",
+      "camera_side": "LEFT",
+      "timestamp_sec": 19.97,
+      "maintenance_status": "Maintenance Required",
+      "tank_image_path": "cropped_tanks\\l\\L2.jpg",
+      "surface_status": "Not Clean",
+      "pipe_support_status": "Absent",
+      "pipe_status": "Not Connected",
+      "detection_confidence": 0.411
+    },
+    {
+      "coach_number": 1,
+      "tank_id": "L3",
+      "camera_side": "LEFT",
+      "timestamp_sec": 20.13,
+      "maintenance_status": "Normal",
+      "tank_image_path": "cropped_tanks\\l\\L3.jpg",
+      "surface_status": "Clean",
+      "pipe_support_status": "Present",
+      "pipe_status": "Connected",
+      "detection_confidence": 0.83
+    },
+    {
+      "coach_number": 1,
+      "tank_id": "L4",
+      "camera_side": "LEFT",
+      "timestamp_sec": 19.8,
+      "maintenance_status": "Maintenance Required",
+      "tank_image_path": "cropped_tanks\\l\\L4.jpg",
+      "surface_status": "Clean",
+      "pipe_support_status": "Present",
+      "pipe_status": "Not Connected",
+      "detection_confidence": 0.789
+    },
+    {
+      "coach_number": 1,
+      "tank_id": "R1",
+      "camera_side": "RIGHT",
+      "timestamp_sec": 13.3,
+      "maintenance_status": "Maintenance Required",
+      "tank_image_path": "cropped_tanks\\r\\R1.jpg",
+      "surface_status": "Clean",
+      "pipe_support_status": "Present",
+      "pipe_status": "Not Connected",
+      "detection_confidence": 0.781
+    },
+    {
+      "coach_number": 1,
+      "tank_id": "R2",
+      "camera_side": "RIGHT",
+      "timestamp_sec": 19.97,
+      "maintenance_status": "Maintenance Required",
+      "tank_image_path": "cropped_tanks\\r\\R2.jpg",
+      "surface_status": "Not Clean",
+      "pipe_support_status": "Absent",
+      "pipe_status": "Not Connected",
+      "detection_confidence": 0.411
+    },
+    {
+      "coach_number": 1,
+      "tank_id": "R3",
+      "camera_side": "RIGHT",
+      "timestamp_sec": 20.13,
+      "maintenance_status": "Normal",
+      "tank_image_path": "cropped_tanks\\r\\R3.jpg",
+      "surface_status": "Clean",
+      "pipe_support_status": "Present",
+      "pipe_status": "Connected",
+      "detection_confidence": 0.83
+    },
+    {
+      "coach_number": 1,
+      "tank_id": "R4",
+      "camera_side": "RIGHT",
+      "timestamp_sec": 19.8,
+      "maintenance_status": "Maintenance Required",
+      "tank_image_path": "cropped_tanks\\r\\R4.jpg",
+      "surface_status": "Clean",
+      "pipe_support_status": "Present",
+      "pipe_status": "Not Connected",
+      "detection_confidence": 0.789
+    }
+  ]
+}
