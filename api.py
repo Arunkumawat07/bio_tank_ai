@@ -44,3 +44,11 @@ async def inspect_video(file: UploadFile = File(...)):
     finally:
         if "video_path" in locals() and os.path.exists(video_path):
             os.remove(video_path)
+
+@app.get("/test-model")
+def test_model():
+    try:
+        from btcas_pipeline import process_video
+        return {"status": "import_ok"}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
