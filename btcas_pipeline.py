@@ -149,12 +149,12 @@ _model_cache: dict = {}
 #     return _model_cache[MODEL_PATH]
 
 
-# def _resize_for_inference(frame: np.ndarray) -> np.ndarray:
-#     """Resize frame to fixed dimensions for consistent, fast inference."""
-#     h, w = frame.shape[:2]
-#     if w == RESIZE_WIDTH and h == RESIZE_HEIGHT:
-#         return frame
-#     return cv2.resize(frame, (RESIZE_WIDTH, RESIZE_HEIGHT), interpolation=cv2.INTER_LINEAR)
+def _resize_for_inference(frame: np.ndarray) -> np.ndarray:
+    """Resize frame to fixed dimensions for consistent, fast inference."""
+    h, w = frame.shape[:2]
+    if w == RESIZE_WIDTH and h == RESIZE_HEIGHT:
+        return frame
+    return cv2.resize(frame, (RESIZE_WIDTH, RESIZE_HEIGHT), interpolation=cv2.INTER_LINEAR)
 
 def _load_model() -> YOLO:
     print("STEP 1: Entering _load_model")
@@ -202,15 +202,9 @@ def _load_model() -> YOLO:
 
 
 def _run_inference(frame: np.ndarray) -> list[Box]:
-    print("STEP 4: Starting inference")
-
     model = _load_model()
 
-    print("STEP 5: Model obtained")
-
     resized = _resize_for_inference(frame)
-
-    print("STEP 6: Frame resized")
 
     results = model(
         resized,
@@ -219,9 +213,31 @@ def _run_inference(frame: np.ndarray) -> list[Box]:
         verbose=False,
     )
 
-    print("STEP 7: YOLO inference completed")
+    orig_h, orig_w = frame.shape[:2]
+    sx = orig_w / RESIZE_WIDTH
+    sy = orig_h / RESIZE_HEIGHT
 
-    return []
+    boxes = []
+
+    for r in results:
+        if r.boxes is None:
+            continue
+
+        for b in r.boxes:
+            xyxy = b.xyxy[0].cpu().numpy()
+
+            boxes.append(
+                Box(
+                    x1=float(xyxy[0] * sx),
+                    y1=float(xyxy[1] * sy),
+                    x2=float(xyxy[2] * sx),
+                    y2=float(xyxy[3] * sy),
+                    conf=float(b.conf[0].cpu().numpy()),
+                    cls=int(b.cls[0].cpu().numpy()),
+                )
+            )
+
+    return boxes
 # ─────────────────────────────────────────
 # TRACKING & DETECTION FLOW
 # ─────────────────────────────────────────

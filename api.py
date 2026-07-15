@@ -116,3 +116,28 @@ def debug():
         "load_model_exists": "_load_model" in globals(),
         "run_inference_exists": "_run_inference" in globals(),
     }
+@app.get("/debug-model")
+def debug_model():
+    try:
+        from btcas_pipeline import _load_model
+
+        model = _load_model()
+
+        return {
+            "success": True,
+            "model_loaded": True
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+@app.get("/model-check")
+def model_check():
+    import os
+
+    return {
+        "exists": os.path.exists("btcas_yolov8s_v2_best.pt"),
+        "cwd": os.getcwd()
+    }
