@@ -45,22 +45,26 @@ def home():
 
 @app.post("/inspect")
 async def inspect_video(file: UploadFile = File(...)):
-    print("REQUEST RECEIVED")
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
+            tmp.write(await file.read())
+            video_path = tmp.name
 
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
-        tmp.write(await file.read())
-        video_path = tmp.name
+        result = process_video(video_path, camera_side="LEFT")
 
-    print("VIDEO SAVED:", video_path)
+        return {
+            "success": True,
+            "inspection": result
+        }
 
-    result = process_video(video_path, camera_side="LEFT")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
 
-    print("PROCESS VIDEO FINISHED")
-
-    return {
-        "success": True,
-        "inspection": result
-    }
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 @app.get("/test-model")
 def test_model():
