@@ -57,3 +57,31 @@ async def inspect_test(file: UploadFile = File(...)):
         "filename": file.filename,
         "content_type": file.content_type
     }
+
+@app.post("/inspect-debug")
+async def inspect_debug(file: UploadFile = File(...)):
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
+        tmp.write(await file.read())
+        video_path = tmp.name
+
+    try:
+        print("Video saved:", video_path)
+
+        cap = cv2.VideoCapture(video_path)
+
+        if not cap.isOpened():
+            return {"error": "OpenCV cannot open video"}
+
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+
+        cap.release()
+
+        return {
+            "success": True,
+            "frames": total_frames,
+            "fps": fps
+        }
+
+    except Exception as e:
+        return {"error": str(e)}
