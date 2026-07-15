@@ -212,6 +212,9 @@ def _run_inference(frame: np.ndarray) -> list[Box]:
         iou=IOU_THRESHOLD,
         verbose=False,
     )
+    # DEBUG
+    for r in results:
+        print("BOX COUNT:", len(r.boxes) if r.boxes is not None else 0)
 
     orig_h, orig_w = frame.shape[:2]
     sx = orig_w / RESIZE_WIDTH
@@ -220,6 +223,7 @@ def _run_inference(frame: np.ndarray) -> list[Box]:
     boxes = []
 
     for r in results:
+
         if r.boxes is None:
             continue
 

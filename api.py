@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 import traceback
-from btcas_pipeline import _run_inference
+
 from btcas_pipeline import process_video
 
 app = FastAPI()
@@ -184,3 +184,31 @@ async def inspect_debug_2(file: UploadFile = File(...)):
             "error": str(e),
             "traceback": traceback.format_exc()
         }
+@app.get("/model-info")
+def model_info():
+    from ultralytics import YOLO
+
+    model = YOLO("btcas_yolov8s_v2_best.pt")
+
+    return {
+        "names": model.names,
+        "classes": len(model.names)
+    }
+@app.get("/single-test")
+def single_test():
+    from ultralytics import YOLO
+    import cv2
+
+    model = YOLO("btcas_yolov8s_v2_best.pt")
+
+    img = cv2.imread("test.jpg")   # put a known training image in project
+
+    results = model(img)
+
+    total = 0
+
+    for r in results:
+        if r.boxes is not None:
+            total += len(r.boxes)
+
+    return {"detections": total}
