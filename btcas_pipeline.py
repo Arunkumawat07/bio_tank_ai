@@ -237,6 +237,8 @@ def _run_inference(frame: np.ndarray) -> list[Box]:
                 )
             )
 
+    print("TOTAL DETECTIONS:", len(boxes))
+
     return boxes
 # ─────────────────────────────────────────
 # TRACKING & DETECTION FLOW
