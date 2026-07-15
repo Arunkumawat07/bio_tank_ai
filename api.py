@@ -108,3 +108,11 @@ async def inspect_debug(file: UploadFile = File(...)):
 
     except Exception as e:
         return {"error": str(e)}
+
+@app.get("/debug")
+def debug():
+    return {
+        "resize_exists": "_resize_for_inference" in globals(),
+        "load_model_exists": "_load_model" in globals(),
+        "run_inference_exists": "_run_inference" in globals(),
+    }
