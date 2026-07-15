@@ -22,16 +22,16 @@ def home():
 
 @app.post("/inspect")
 async def inspect_video(file: UploadFile = File(...)):
-    import traceback
-
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
             tmp.write(await file.read())
             video_path = tmp.name
 
-        print(f"Video saved: {video_path}")
+        print("Video saved:", video_path)
 
         result = process_video(video_path, camera_side="LEFT")
+
+        print("Processing completed")
 
         return {
             "success": True,
@@ -39,18 +39,9 @@ async def inspect_video(file: UploadFile = File(...)):
         }
 
     except Exception as e:
-        print("ERROR:", str(e))
+        import traceback
         print(traceback.format_exc())
-
-        return {
-            "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
-
-    finally:
-        if "video_path" in locals() and os.path.exists(video_path):
-            os.remove(video_path)
+        raise e
 
 @app.get("/test-model")
 def test_model():
