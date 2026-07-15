@@ -4,7 +4,12 @@ import tempfile
 import os
 import traceback
 
-from btcas_pipeline import process_video
+from btcas_pipeline import (
+    process_video,
+    _run_inference
+)
+import btcas_pipeline
+from btcas_pipeline import _run_inference
 
 app = FastAPI()
 
@@ -144,46 +149,24 @@ def model_check():
 
 @app.post("/inspect-debug-2")
 async def inspect_debug_2(file: UploadFile = File(...)):
-    import tempfile
-    import cv2
-
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
         tmp.write(await file.read())
         video_path = tmp.name
 
-    try:
-        print("STEP A: Video saved")
+    cap = cv2.VideoCapture(video_path)
 
-        cap = cv2.VideoCapture(video_path)
+    ret, frame = cap.read()
+    cap.release()
 
-        print("STEP B: VideoCapture created")
+    if not ret:
+        return {"error": "Cannot read frame"}
 
-        if not cap.isOpened():
-            return {"error": "cannot open video"}
+    boxes = _run_inference(frame)
 
-        ret, frame = cap.read()
-
-        print("STEP C: First frame read")
-
-        if not ret:
-            return {"error": "cannot read frame"}
-
-        boxes = _run_inference(frame)
-
-        print("STEP D: Inference completed")
-
-        return {
-            "success": True,
-            "detections": len(boxes)
-        }
-
-    except Exception as e:
-        import traceback
-        return {
-            "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
-        }
+    return {
+        "success": True,
+        "detections": len(boxes)
+    }
 @app.get("/model-info")
 def model_info():
     from ultralytics import YOLO
