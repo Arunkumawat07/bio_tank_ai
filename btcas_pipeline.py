@@ -221,11 +221,9 @@ def _run_inference(frame: np.ndarray) -> list[Box]:
     sy = orig_h / RESIZE_HEIGHT
 
     boxes = []
-
     for r in results:
-
-        if r.boxes is None:
-            continue
+        if r.boxes is not None:
+            print("RAW BOXES:", r.boxes)
 
         for b in r.boxes:
             xyxy = b.xyxy[0].cpu().numpy()
