@@ -50,3 +50,10 @@ def test_model():
         return {"status": "import_ok"}
     except Exception as e:
         return {"status": "error", "error": str(e)}
+
+@app.post("/inspect-test")
+async def inspect_test(file: UploadFile = File(...)):
+    return {
+        "filename": file.filename,
+        "content_type": file.content_type
+    }
