@@ -20,28 +20,47 @@ app.add_middleware(
 def home():
     return {"status": "running"}
 
+# @app.post("/inspect")
+# async def inspect_video(file: UploadFile = File(...)):
+#     try:
+#         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
+#             tmp.write(await file.read())
+#             video_path = tmp.name
+
+#         print("Video saved:", video_path)
+
+#         result = process_video(video_path, camera_side="LEFT")
+
+#         print("Processing completed")
+
+#         return {
+#             "success": True,
+#             "inspection": result
+#         }
+
+#     except Exception as e:
+#         import traceback
+#         print(traceback.format_exc())
+#         raise e
+
 @app.post("/inspect")
 async def inspect_video(file: UploadFile = File(...)):
-    try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
-            tmp.write(await file.read())
-            video_path = tmp.name
+    print("REQUEST RECEIVED")
 
-        print("Video saved:", video_path)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
+        tmp.write(await file.read())
+        video_path = tmp.name
 
-        result = process_video(video_path, camera_side="LEFT")
+    print("VIDEO SAVED:", video_path)
 
-        print("Processing completed")
+    result = process_video(video_path, camera_side="LEFT")
 
-        return {
-            "success": True,
-            "inspection": result
-        }
+    print("PROCESS VIDEO FINISHED")
 
-    except Exception as e:
-        import traceback
-        print(traceback.format_exc())
-        raise e
+    return {
+        "success": True,
+        "inspection": result
+    }
 
 @app.get("/test-model")
 def test_model():

@@ -143,54 +143,85 @@ class TankTrack:
 _model_cache: dict = {}
 
 
+# def _load_model() -> YOLO:
+#     if MODEL_PATH not in _model_cache:
+#         _model_cache[MODEL_PATH] = YOLO(MODEL_PATH)
+#     return _model_cache[MODEL_PATH]
+
+
+# def _resize_for_inference(frame: np.ndarray) -> np.ndarray:
+#     """Resize frame to fixed dimensions for consistent, fast inference."""
+#     h, w = frame.shape[:2]
+#     if w == RESIZE_WIDTH and h == RESIZE_HEIGHT:
+#         return frame
+#     return cv2.resize(frame, (RESIZE_WIDTH, RESIZE_HEIGHT), interpolation=cv2.INTER_LINEAR)
+
 def _load_model() -> YOLO:
+    print("STEP 1: Entering _load_model")
+
     if MODEL_PATH not in _model_cache:
+        print(f"STEP 2: Loading model {MODEL_PATH}")
         _model_cache[MODEL_PATH] = YOLO(MODEL_PATH)
+        print("STEP 3: Model loaded successfully")
+
     return _model_cache[MODEL_PATH]
 
 
-def _resize_for_inference(frame: np.ndarray) -> np.ndarray:
-    """Resize frame to fixed dimensions for consistent, fast inference."""
-    h, w = frame.shape[:2]
-    if w == RESIZE_WIDTH and h == RESIZE_HEIGHT:
-        return frame
-    return cv2.resize(frame, (RESIZE_WIDTH, RESIZE_HEIGHT), interpolation=cv2.INTER_LINEAR)
+# def _run_inference(frame: np.ndarray) -> list[Box]:
+#     """Run YOLO on a single frame and return list of Box objects.
+#     Frames are resized before inference for speed."""
+#     model = _load_model()
+#     resized = _resize_for_inference(frame)
+#     results = model(
+#         resized,
+#         conf=CONF_THRESHOLD,
+#         iou=IOU_THRESHOLD,
+#         verbose=False,
+#     )
+#     # Scale boxes back to original frame coordinates
+#     orig_h, orig_w = frame.shape[:2]
+#     sx = orig_w / RESIZE_WIDTH
+#     sy = orig_h / RESIZE_HEIGHT
+#     boxes: list[Box] = []
+#     for r in results:
+#         if r.boxes is None:
+#             continue
+#         for b in r.boxes:
+#             xyxy = b.xyxy[0].cpu().numpy()
+#             boxes.append(
+#                 Box(
+#                     x1=float(xyxy[0] * sx),
+#                     y1=float(xyxy[1] * sy),
+#                     x2=float(xyxy[2] * sx),
+#                     y2=float(xyxy[3] * sy),
+#                     conf=float(b.conf[0].cpu().numpy()),
+#                     cls=int(b.cls[0].cpu().numpy()),
+#                 )
+#             )
+#     return boxes
 
 
 def _run_inference(frame: np.ndarray) -> list[Box]:
-    """Run YOLO on a single frame and return list of Box objects.
-    Frames are resized before inference for speed."""
+    print("STEP 4: Starting inference")
+
     model = _load_model()
+
+    print("STEP 5: Model obtained")
+
     resized = _resize_for_inference(frame)
+
+    print("STEP 6: Frame resized")
+
     results = model(
         resized,
         conf=CONF_THRESHOLD,
         iou=IOU_THRESHOLD,
         verbose=False,
     )
-    # Scale boxes back to original frame coordinates
-    orig_h, orig_w = frame.shape[:2]
-    sx = orig_w / RESIZE_WIDTH
-    sy = orig_h / RESIZE_HEIGHT
-    boxes: list[Box] = []
-    for r in results:
-        if r.boxes is None:
-            continue
-        for b in r.boxes:
-            xyxy = b.xyxy[0].cpu().numpy()
-            boxes.append(
-                Box(
-                    x1=float(xyxy[0] * sx),
-                    y1=float(xyxy[1] * sy),
-                    x2=float(xyxy[2] * sx),
-                    y2=float(xyxy[3] * sy),
-                    conf=float(b.conf[0].cpu().numpy()),
-                    cls=int(b.cls[0].cpu().numpy()),
-                )
-            )
-    return boxes
 
+    print("STEP 7: YOLO inference completed")
 
+    return []
 # ─────────────────────────────────────────
 # TRACKING & DETECTION FLOW
 # ─────────────────────────────────────────
