@@ -204,7 +204,7 @@ def render_card(r):
 
     rows = [
         ("Tank ID",             f'<span class="badge badge-info">{r["tank_id"]}</span>'),
-        ("Coach Number",        str(r.get("coach_number","—"))),
+        # ("Coach Number",        str(r.get("coach_number","—"))),
         ("Camera Side",         f'{cam_icon} {r.get("camera_side","—")}'),
         ("Timestamp (s)",       str(r.get("timestamp_sec","—"))),
         ("Pipe Status",         badge(r["pipe_status"],                    "pipe_status")),
