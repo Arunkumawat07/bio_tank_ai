@@ -4,6 +4,9 @@ import tempfile
 import os
 import traceback
 import cv2
+from fastapi import FastAPI
+import json
+import os
 
 from btcas_pipeline import (
     process_video,
@@ -196,3 +199,32 @@ def single_test():
             total += len(r.boxes)
 
     return {"detections": total}
+
+from fastapi import FastAPI
+import json
+import os
+
+@app.get("/latest-result")
+def latest_result():
+    try:
+        file_path = "latest_result.json"
+
+        if not os.path.exists(file_path):
+            return {
+                "success": False,
+                "message": "No inspection result available"
+            }
+
+        with open(file_path, "r") as f:
+            data = json.load(f)
+
+        return {
+            "success": True,
+            "inspection": data
+        }
+
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
