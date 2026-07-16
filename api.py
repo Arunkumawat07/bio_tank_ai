@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import tempfile
 import os
 import traceback
+import cv2
 
 from btcas_pipeline import (
     process_video,
