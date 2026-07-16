@@ -7,6 +7,8 @@ import cv2
 from fastapi import FastAPI
 import json
 import os
+from ultralytics import YOLO
+
 
 from btcas_pipeline import (
     process_video,
@@ -200,9 +202,7 @@ def single_test():
 
     return {"detections": total}
 
-from fastapi import FastAPI
-import json
-import os
+
 
 @app.get("/latest-result")
 def latest_result():
@@ -228,3 +228,38 @@ def latest_result():
             "success": False,
             "error": str(e)
         }
+
+
+
+model = YOLO("btcas_yolov8s_v2_best.pt")
+
+@app.get("/live-inspection")
+def live_inspection():
+
+    cap = cv2.VideoCapture(0)
+
+    ret, frame = cap.read()
+
+    cap.release()
+
+    if not ret:
+        return {"success": False, "error": "Camera not working"}
+
+    results = model(frame)
+
+    detections = []
+
+    for r in results:
+        if r.boxes is None:
+            continue
+
+        for b in r.boxes:
+            detections.append({
+                "class": int(b.cls[0]),
+                "confidence": float(b.conf[0])
+            })
+
+    return {
+        "success": True,
+        "detections": detections
+    }
